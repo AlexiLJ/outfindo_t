@@ -33,6 +33,8 @@ def scrape_product_detail_page(product_detail_url):
             row = [tr.text for tr in td]
             table_list.append(row[1:])
     table=pd.DataFrame(table_list, columns=['spec', 'data'])
+    # table = table.where(pd.notnull(table), None)
+    # table=dumps(table.where(pd.notnull(table), None))
     
     
     year = table[table['spec'] == "Ročník"]
@@ -45,20 +47,26 @@ def scrape_product_detail_page(product_detail_url):
    
     return yield_
 
-
-'''
-
-model_year - celočíselná hodota modelového roky daného kola, na "Ročník" v sekci
-Sekce parameters bude obsahovat tyto parametry
-weight - textová hodnota, nachází pod názvem "Hmotnost" v sekci specifikace
-frame - textová hodnota názvu rámu, nachází se pod názvem "Rám" v sekci specifikace
-'''
-
+def main(name, url_links):
+    with open(name, 'a') as f:
+        data=[scrape_product_detail_page(task) for task in url_links] #brute force
+        json.dump(data, f, indent=4)
+       
 if __name__ == '__main__':
-    scrap = scrape_product_detail_page('https://www.lapierre-bike.cz/produkt/spicy-cf-69/5943')
-    # print(scrap)
+    tasks = [
+        "https://www.lapierre-bike.cz/produkt/aircode-drs-80/5934", 
+        "https://www.lapierre-bike.cz/produkt/spicy-cf-79/5993",
+        "https://www.lapierre-bike.cz/produkt/lapierre-crosshill-50/6037",
+        "https://www.lapierre-bike.cz/produkt/lapierre-ezesty-am-ltd-ultimate/5951",
+        "https://www.lapierre-bike.cz/produkt/lapierre-ezesty-am-90-ultimate/5950"
 
-    with open('output.json', 'w+') as f:
-        # this would place the entire output on one line
-        # use json.dump(lista_items, f, indent=4) to "pretty-print" with four spaces per indent
-        json.dump(scrap, f, indent=4)
+    ]
+
+    main("top-5-bikes.json", tasks)
+
+
+    
+
+
+        
+   
