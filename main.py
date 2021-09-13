@@ -33,8 +33,7 @@ def scrape_product_detail_page(product_detail_url):
             row = [tr.text for tr in td]
             table_list.append(row[1:])
     table=pd.DataFrame(table_list, columns=['spec', 'data'])
-    # table = table.where(pd.notnull(table), None)
-    # table=dumps(table.where(pd.notnull(table), None))
+    
     
     
     year = table[table['spec'] == "Ročník"]
