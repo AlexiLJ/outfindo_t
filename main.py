@@ -7,10 +7,11 @@ import pandas as pd
 
 
 def scrape_product_detail_page(product_detail_url):
-    yield_=dict()
-    product_page = requests.get(product_detail_url)
-    soup = BeautifulSoup(product_page.content, 'lxml')
-    yield_["model"] = soup.find(id="detail_page").h1.text
+    yield_=dict()                                           #init dinct
+    product_page = requests.get(product_detail_url)         
+    soup = BeautifulSoup(product_page.content, 'lxml')      #get bs4 representation of the page 
+    
+    yield_["model"] = soup.find(id="detail_page").h1.text   # getting requsted data
     yield_["url"] = product_detail_url
     yield_["main_photo_path"] = soup.find(id="nahled")["src"]
 
@@ -18,8 +19,8 @@ def scrape_product_detail_page(product_detail_url):
     if len(links) == 0: yield_['additional_photo_paths']=None
     else: yield_['additional_photo_paths']=links
 
-    price  = soup.find(class_="cena").span.text.split()[0].split('.') 
-    yield_["price"] = int(''.join(price))
+    price  = soup.find(class_="cena").span.text.split()[0].split('.')  #formating price
+    yield_["price"] = int(''.join(price))                               #
     yield_["model_year"] = int(''.join(price))
 
     #Here I manage specs in the html table through pandas
@@ -32,7 +33,7 @@ def scrape_product_detail_page(product_detail_url):
             td = tr.find_all('td')
             row = [tr.text for tr in td]
             table_list.append(row[1:])
-    table=pd.DataFrame(table_list, columns=['spec', 'data'])
+    table=pd.DataFrame(table_list, columns=['spec', 'data']) # get pandas data frame
     
     
     
@@ -49,7 +50,7 @@ def scrape_product_detail_page(product_detail_url):
 def main(name, url_links):
     with open(name, 'a') as f:
         data=[scrape_product_detail_page(task) for task in url_links] #brute force
-        json.dump(data, f, indent=4)
+        json.dump(data, f, indent=4)                                    #
        
 if __name__ == '__main__':
     tasks = [
